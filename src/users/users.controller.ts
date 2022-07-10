@@ -38,13 +38,4 @@ export class UsersController {
     const data = await this.usersService.login(payload);
     return { message: 'Login success', data };
   }
-
-  @Post('transact')
-  async update(
-    @Param('id') id: string,
-    @Body() transactionDto: TransactionDto,
-  ) {
-    await this.usersService.updateTransaction(transactionDto);
-    return { message: 'Transaction successful' };
-  }
 }

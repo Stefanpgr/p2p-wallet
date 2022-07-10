@@ -12,7 +12,7 @@ datasource db {
 }
 
 model users {
-  id        Int     @id @default(autoincrement())
+  id        String     @id @default(uuid())
   email     String  @unique @db.VarChar(150)
   password  String  @db.VarChar(250)
   firstname String  @db.VarChar(150)
@@ -27,34 +27,41 @@ model users {
 }
 
 enum WalletTransactionStatus {
-  COMMIT
   ROLLBACK
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum WalletTransactionType {
+  CREDIT
+  DEBIT
 }
 
 model wallet_transactions {
   id                                                     Int                     @id @default(autoincrement())
-  transaction_ref                                        String                  @db.VarChar(100)
+  ref                                        String                  @db.VarChar(100)
   narration                                              String?                 @db.VarChar(250)
   amount                                                 Decimal                 @db.Decimal(15, 4)
-  transaction_type                                       String?                 @db.VarChar(10)
-  debit_account_id                                       Int
-  credit_account_id                                      Int
+  type                                       WalletTransactionType?
+  prev_balance      Float  
+  new_balance      Float   
+  debit_account_id                                       String?
+  credit_account_id                                      String?
   created_at                                             DateTime                @default(now())
   updated_at                                             DateTime                @default(now())
   status                                                 WalletTransactionStatus
-  wallets_wallet_transactions_credit_account_idTowallets wallets                 @relation("wallet_transactions_credit_account_idTowallets", fields: [credit_account_id], references: [account_id], onDelete: SetNull, onUpdate: SetNull)
-  wallets_wallet_transactions_debit_account_idTowallets  wallets                 @relation("wallet_transactions_debit_account_idTowallets", fields: [debit_account_id], references: [account_id], onDelete: SetNull, onUpdate: SetNull)
+  wallets_wallet_transactions_credit_account_idTowallets wallets?                 @relation("wallet_transactions_credit_account_idTowallets", fields: [credit_account_id], references: [id], onDelete: SetNull, onUpdate: SetNull)
+  wallets_wallet_transactions_debit_account_idTowallets  wallets?                 @relation("wallet_transactions_debit_account_idTowallets", fields: [debit_account_id], references: [id], onDelete: SetNull, onUpdate: SetNull)
 
-  @@unique([transaction_ref, status, debit_account_id, credit_account_id])
+  @@index([ref, status, debit_account_id, credit_account_id])
 }
 
 model wallets {
-  account_id   Int      @id @default(autoincrement())
+ id   String      @id @default(uuid())
   name         String   @db.VarChar(150)
-  description  String?  @db.VarChar(150)
-  reference_id String   @db.VarChar(50)
-  user_id      Int      @unique
-  balance      Decimal  @default(0.0) @db.Decimal(15, 4)
+  user_id      String      @unique
+  balance      Float  @default(0.0) 
   created_at   DateTime @default(now())
   updated_at   DateTime @default(now())
 
@@ -62,6 +69,5 @@ model wallets {
   wallet_transactions_wallet_transactions_credit_account_idTowallets wallet_transactions[] @relation("wallet_transactions_credit_account_idTowallets")
   wallet_transactions_wallet_transactions_debit_account_idTowallets  wallet_transactions[] @relation("wallet_transactions_debit_account_idTowallets")
 
-  @@unique([reference_id])
-  @@index([account_id, reference_id])
+  @@index([id, user_id])
 }

@@ -14,7 +14,7 @@ export class LoginUserDto {
 }
 
 export class TransactionDto {
-  @IsNotEmpty() debitAccountId: number;
-  @IsNotEmpty() creditAccountid: number;
+  @IsNotEmpty() debitAccountId: string;
+  @IsNotEmpty() creditAccountid: string;
   @IsNotEmpty() amount: number;
 }

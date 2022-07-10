@@ -1,30 +1,42 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { WalletsService } from './wallets.service';
-import { CreateWalletDto } from './dto/create-wallet.dto';
-import { UpdateWalletDto } from './dto/update-wallet.dto';
+import { FundWalletDto } from './dto/fund-wallet.dto';
+import { WalletTransferDto } from './dto/wallet-transfer.dto';
 
-@Controller('wallets')
+@Controller('wallet')
 export class WalletsController {
   constructor(private readonly walletsService: WalletsService) {}
 
   @Post()
-  create(@Body() createWalletDto: CreateWalletDto) {
-    return this.walletsService.create(createWalletDto);
+  async fundWallet(@Body() createWalletDto: WalletTransferDto) {
+    const data = await this.walletsService.fundWallet(createWalletDto);
+    return { message: 'Click on the link to complete transaction', data };
   }
 
   @Get()
-  findAll() {
-    return this.walletsService.findAll();
+  async findAll() {
+    const wallets = await this.walletsService.findAll();
+    return { message: 'User registered succesfully', wallets };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.walletsService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const wallet = await this.walletsService.findOne(id);
+    return { message: 'Wallet data fetch successful', wallet };
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWalletDto: UpdateWalletDto) {
-    return this.walletsService.update(+id, updateWalletDto);
+  @Post('transfer')
+  async walletTransfer(@Body() walletTransferDto: WalletTransferDto) {
+    await this.walletsService.walletTransfer(walletTransferDto);
+    return { message: 'Transfer succesful' };
   }
 
   @Delete(':id')
