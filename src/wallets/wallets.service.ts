@@ -107,7 +107,7 @@ export class WalletsService {
       throw new BadRequestException('Invalid accounts');
 
     if (debitAccount.balance < amount)
-      throw new BadRequestException('Insufficient Ballance.');
+      throw new BadRequestException('Insufficient Balance.');
 
     await this.prismaService.$transaction(async (prisma: PrismaClient) => {
       await prisma.walleTransaction.create({
@@ -128,7 +128,7 @@ export class WalletsService {
           id: debitAccountId,
         },
         data: {
-          balance: debitAccount.balance - amount,
+          balance: { decrement: amount },
         },
       });
       await prisma.wallet.update({
@@ -136,7 +136,7 @@ export class WalletsService {
           id: creditAccountid,
         },
         data: {
-          balance: creditAccount.balance + amount,
+          balance: { increment: amount },
         },
       });
     });

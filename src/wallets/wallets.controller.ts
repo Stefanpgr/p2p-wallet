@@ -48,13 +48,14 @@ export class WalletsController {
   @Get()
   async findAll() {
     const wallets = await this.walletsService.findAll();
-    return { message: 'User registered succesfully', wallets };
+
+    return { message: 'User wallets', data: wallets };
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const wallet = await this.walletsService.findOne(id);
-    return { message: 'Wallet data fetch successful', wallet };
+    return { message: 'Wallet data fetch successful', data: wallet };
   }
 
   @HttpCode(200)
@@ -64,6 +65,6 @@ export class WalletsController {
     @Body() walletTransferDto: WalletTransferDto,
   ) {
     await this.walletsService.walletTransfer(walletTransferDto);
-    return { message: 'Transfer succesful' };
+    return { message: 'Transfer successful' };
   }
 }

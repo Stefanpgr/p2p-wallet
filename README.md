@@ -1,7 +1,19 @@
-
 ## Description
 
-This project updates user wallet ballance using prisma transaction.
+This project funds user wallet balance and handles p2p wallet transfers.
+
+##### Features
+
+* Signup
+* Login
+* Initialize Wallet funding
+* Complete wallet funding
+* Transfer money to another user wallet
+* Get User Wallet
+
+##### Postman Doc
+
+[https://documenter.getpostman.com/view/5765926/UzJQqZwe]()
 
 ## Installation
 
