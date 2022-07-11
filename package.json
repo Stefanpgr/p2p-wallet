@@ -9,7 +9,7 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "node dist/main",
+    "start": "yarn prisma migrate deploy && node dist/main",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
@@ -48,7 +48,7 @@
     "rxjs": "^7.2.0"
   },
   "engines": {
-    "node": ">16.x.x"
+    "node": ">=16.x.x"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",
