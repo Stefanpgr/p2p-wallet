@@ -37,6 +37,6 @@ async function bootstrap() {
     new PrismaClientExceptionFilter(httpAdapter),
     new HttpExceptionFilter(),
   );
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 3000);
 }
 bootstrap();

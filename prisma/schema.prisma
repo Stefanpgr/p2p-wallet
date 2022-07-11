@@ -11,7 +11,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model users {
+model User {
   id        String     @id @default(uuid())
   email     String  @unique @db.VarChar(150)
   password  String  @db.VarChar(250)
@@ -22,8 +22,10 @@ model users {
   created_at DateTime @default(now()) @db.Timestamp(6)
   updated_at DateTime @default(now()) @db.Timestamp(6)
 
+  
+  wallets Wallet[]
   @@index([email])
-  wallets wallets[]
+  @@map("users")
 }
 
 enum WalletTransactionStatus {
@@ -38,36 +40,39 @@ enum WalletTransactionType {
   DEBIT
 }
 
-model wallet_transactions {
+model WalleTransaction {
   id                                                     Int                     @id @default(autoincrement())
   ref                                        String                  @db.VarChar(100)
   narration                                              String?                 @db.VarChar(250)
-  amount                                                 Decimal                 @db.Decimal(15, 4)
+  amount                                                 Float                
   type                                       WalletTransactionType?
-  prev_balance      Float  
-  new_balance      Float   
+  fee      Float?
+  prev_balance      Float?  @default(0)
+  new_balance      Float?   @default(0)
   debit_account_id                                       String?
   credit_account_id                                      String?
   created_at                                             DateTime                @default(now())
   updated_at                                             DateTime                @default(now())
   status                                                 WalletTransactionStatus
-  wallets_wallet_transactions_credit_account_idTowallets wallets?                 @relation("wallet_transactions_credit_account_idTowallets", fields: [credit_account_id], references: [id], onDelete: SetNull, onUpdate: SetNull)
-  wallets_wallet_transactions_debit_account_idTowallets  wallets?                 @relation("wallet_transactions_debit_account_idTowallets", fields: [debit_account_id], references: [id], onDelete: SetNull, onUpdate: SetNull)
+  wallets_wallet_transactions_credit_account_idTowallets Wallet?                 @relation("wallet_transactions_credit_account_idTowallets", fields: [credit_account_id], references: [id], onDelete: SetNull, onUpdate: SetNull)
+  wallets_wallet_transactions_debit_account_idTowallets  Wallet?                 @relation("wallet_transactions_debit_account_idTowallets", fields: [debit_account_id], references: [id], onDelete: SetNull, onUpdate: SetNull)
 
   @@index([ref, status, debit_account_id, credit_account_id])
+  @@map("wallet_transactions")
 }
 
-model wallets {
+model Wallet {
  id   String      @id @default(uuid())
   name         String   @db.VarChar(150)
   user_id      String      @unique
-  balance      Float  @default(0.0) 
+  balance      Float  @default(0) 
   created_at   DateTime @default(now())
   updated_at   DateTime @default(now())
 
-  users                                                               users                 @relation(fields: [user_id], references: [id])
-  wallet_transactions_wallet_transactions_credit_account_idTowallets wallet_transactions[] @relation("wallet_transactions_credit_account_idTowallets")
-  wallet_transactions_wallet_transactions_debit_account_idTowallets  wallet_transactions[] @relation("wallet_transactions_debit_account_idTowallets")
+  users                                                               User                 @relation(fields: [user_id], references: [id])
+  wallet_transactions_wallet_transactions_credit_account_idTowallets WalleTransaction[] @relation("wallet_transactions_credit_account_idTowallets")
+  wallet_transactions_wallet_transactions_debit_account_idTowallets  WalleTransaction[] @relation("wallet_transactions_debit_account_idTowallets")
 
   @@index([id, user_id])
+  @@map("wallets")
 }

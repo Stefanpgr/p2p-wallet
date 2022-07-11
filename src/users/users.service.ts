@@ -16,7 +16,7 @@ export class UsersService {
   ) {}
 
   async create(payload: CreateUserDto) {
-    let user = await this.prismaService.users.findFirst({
+    let user = await this.prismaService.user.findFirst({
       where: {
         email: payload.email,
       },
@@ -25,10 +25,10 @@ export class UsersService {
     const saltOrRounds = 10;
     const salt = await bcrypt.genSalt(saltOrRounds);
     const hash = await bcrypt.hash(payload.password, salt);
-    user = await this.prismaService.users.create({
+    user = await this.prismaService.user.create({
       data: { ...payload, password: hash },
     });
-    const wallet = await this.prismaService.wallets.create({
+    const wallet = await this.prismaService.wallet.create({
       data: {
         name: `${payload.firstname.toUpperCase()} ${payload.lastname.toUpperCase()}`,
         user_id: user.id,
@@ -42,5 +42,10 @@ export class UsersService {
     const user = await this.authService.validateUser(email, password);
     if (!user) throw new UnauthorizedException();
     return this.authService.login(user);
+  }
+  async findOne(email: string) {
+    const user = await this.prismaService.user.findFirst({ where: { email } });
+    if (!user) return null;
+    return user;
   }
 }

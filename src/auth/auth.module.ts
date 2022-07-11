@@ -3,10 +3,11 @@ import { AuthService } from './auth.service';
 import { LocalStrategy } from './local.strategy';
 import { UsersModule } from '../users/users.module';
 import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { PrismaModule } from 'src/config/database/prisma/prisma.module';
 import { JwtStrategy } from './jwt.strategy';
 import { PrismaService } from 'src/config/database/prisma/prisma.service';
+import { UsersService } from 'src/users/users.service';
 
 @Module({
   imports: [
@@ -17,7 +18,13 @@ import { PrismaService } from 'src/config/database/prisma/prisma.service';
       signOptions: { expiresIn: '1d' },
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, PrismaService],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    PrismaService,
+    UsersService,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}
