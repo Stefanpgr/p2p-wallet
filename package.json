@@ -47,6 +47,9 @@
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0"
   },
+  "engines": {
+    "node": ">16.x.x"
+  },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",
     "@nestjs/schematics": "^8.0.0",
